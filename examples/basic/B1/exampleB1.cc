@@ -40,7 +40,64 @@
 
 #include "Randomize.hh"
 
+#include "G4SystemOfUnits.hh"
+
+#include "G4Step.hh"
+#include "G4Track.hh"
+#include "G4Event.hh"
+#include "G4StepException.hh"
+#include "G4TrackingException.hh"
+#include "G4EventException.hh"
+#include <exception>
+#include <exception>
+#include <iostream>
+#include <stdexcept>
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+void process_exception(const std::exception_ptr& p)
+{
+    try{
+        std::rethrow_exception(p);
+    }
+    catch(G4StepException& ee) {
+        const auto& g4_step = *ee.step;
+        std::ostringstream os;
+        os << "Step exception detected! \n";
+        os << "Kinetic energy (MeV): " << (g4_step.GetPreStepPoint()->GetKineticEnergy() / MeV) << "\n";
+        os << "Position X (mm): " << g4_step.GetPostStepPoint()->GetPosition()[0] / mm << "\n";
+        os << "Position Y (mm): " << g4_step.GetPostStepPoint()->GetPosition()[1] / mm << "\n";
+        os << "Position Z (mm): " << g4_step.GetPostStepPoint()->GetPosition()[2] / mm << "\n";
+        std::cout << os.str() << std::endl;
+    }
+    catch(G4EventException& ee) {
+        std::ostringstream os;
+        os << "Event exception detected! \n";
+        const G4Event& event = *ee.event;
+        os << "Seed: \n" << event.GetRandomNumberStatus();
+        std::cout << os.str() << std::endl;
+    }
+    catch(G4TrackException& ee) {
+        std::ostringstream os;
+        os << "Track exception detected! \n";
+        const G4Track& track = *ee.track;
+        os << "TrackId: " << track.GetTrackID();
+        std::cout << os.str() << std::endl;
+    }
+
+    try{
+        try{
+            std::rethrow_exception(p);
+        }
+        catch(const std::exception& e)
+        {
+            std::rethrow_if_nested(e);
+        }
+    }
+    catch(...) {
+        process_exception(std::current_exception());
+    }
+}
+
 
 int main(int argc,char** argv)
 {
@@ -82,6 +139,7 @@ int main(int argc,char** argv)
   // Get the pointer to the User Interface manager
   G4UImanager* UImanager = G4UImanager::GetUIpointer();
 
+  try{
   // Process macro or start UI session
   //
   if ( ! ui ) { 
@@ -95,6 +153,10 @@ int main(int argc,char** argv)
     UImanager->ApplyCommand("/control/execute init_vis.mac");
     ui->SessionStart();
     delete ui;
+  }
+  }
+  catch(...) {
+      process_exception(std::current_exception());
   }
 
   // Job termination

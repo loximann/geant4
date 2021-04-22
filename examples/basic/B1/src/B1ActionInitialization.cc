@@ -33,6 +33,8 @@
 #include "B1EventAction.hh"
 #include "B1SteppingAction.hh"
 
+#include "G4WorkerRunManager.hh"
+
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 B1ActionInitialization::B1ActionInitialization()
@@ -65,6 +67,8 @@ void B1ActionInitialization::Build() const
   SetUserAction(eventAction);
   
   SetUserAction(new B1SteppingAction(eventAction));
+
+    G4WorkerRunManager::GetWorkerRunManager()->StoreRandomNumberStatusToG4Event(1);
 }  
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

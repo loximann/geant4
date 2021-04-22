@@ -43,6 +43,9 @@
 #include "G4GeometryTolerance.hh"
 #include "G4Profiler.hh"
 #include "G4TiMemory.hh"
+#include <exception>
+
+#include "G4StepException.hh"
 
 //////////////////////////////////////
 G4SteppingManager::G4SteppingManager()
@@ -160,6 +163,7 @@ G4StepStatus G4SteppingManager::Stepping()
   //
   fStep->SetPointerToVectorOfAuxiliaryPoints(nullptr);
 
+  try {
   //-----------------
   // AtRest Processes
   //-----------------
@@ -266,6 +270,10 @@ G4StepStatus G4SteppingManager::Stepping()
   // Stepping process finish. Return the value of the StepStatus
   //
   return fStepStatus;
+  }
+  catch(...) {
+      std::throw_with_nested(G4StepException{fStep});
+  }
 }
 
 ///////////////////////////////////////////////////////////

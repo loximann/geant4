@@ -38,6 +38,7 @@
 #include "G4ios.hh"
 #include "G4Profiler.hh"
 #include "G4TiMemory.hh"
+#include "G4TrackingException.hh"
 
 //////////////////////////////////////
 G4TrackingManager::G4TrackingManager()
@@ -60,6 +61,7 @@ G4TrackingManager::~G4TrackingManager()
 void G4TrackingManager::ProcessOneTrack(G4Track* apValueG4Track)
 ////////////////////////////////////////////////////////////////
 {
+    try{
   // Receiving a G4Track from the EventManager, this funciton has the
   // responsibility to trace the track till it stops
 
@@ -168,6 +170,10 @@ void G4TrackingManager::ProcessOneTrack(G4Track* apValueG4Track)
   {
     delete fpTrajectory;
     fpTrajectory = nullptr;
+  }
+  }
+  catch(...) {
+      std::throw_with_nested(G4TrackException{fpTrack});
   }
 }
 

@@ -41,6 +41,8 @@
 #include "G4Profiler.hh"
 #include <list>
 #include <map>
+#include <exception>
+#include <mutex>
 
 class G4MTRunManagerKernel;
 class G4ScoringManager;
@@ -287,13 +289,20 @@ class G4MTRunManager : public G4RunManager
   static G4int SeedOncePerCommunication();
   static void SetSeedOncePerCommunication(G4int val);
   static G4ThreadId GetMasterTheadId();
- 
+
+  void NotifyException(std::exception_ptr exception);
  protected:
   // Barriers: synch points between master and workers
   G4MTBarrier beginOfEventLoopBarrier;
   G4MTBarrier endOfEventLoopBarrier;
   G4MTBarrier nextActionRequestBarrier;
   G4MTBarrier processUIBarrier;
+
+ public:
+  std::vector<std::exception_ptr> worker_exceptions;
+  std::mutex mutex;
+
+  bool bypassCleanup = false;
 };
 
 #endif  // G4MTRunManager_h

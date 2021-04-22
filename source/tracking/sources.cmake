@@ -17,6 +17,7 @@ geant4_define_module(NAME G4tracking
     G4SmoothTrajectoryPoint.hh
     G4SteppingManager.hh
     G4SteppingVerbose.hh
+    G4TrackingException.hh
     G4TrackingManager.hh
     G4TrackingMessenger.hh
     G4Trajectory.hh
@@ -40,6 +41,7 @@ geant4_define_module(NAME G4tracking
     G4SteppingManager.cc
     G4SteppingManager2.cc
     G4SteppingVerbose.cc
+    G4TrackingException.cc
     G4TrackingManager.cc
     G4TrackingMessenger.cc
     G4Trajectory.cc

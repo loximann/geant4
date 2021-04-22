@@ -137,7 +137,9 @@ class G4MTBarrier
   G4MTBarrier(unsigned int numThreads);
   void ThisWorkerReady();
   virtual void WaitForReadyWorkers();
-  inline void SetActiveThreads(unsigned int val) { m_numActiveThreads = val; }
+  inline void SetActiveThreads(unsigned int val) { m_numActiveThreads = val;
+  G4CONDITIONBROADCAST(&m_counterChanged);
+  }
   void ResetCounter();
   unsigned int GetCounter();
   void Wait();

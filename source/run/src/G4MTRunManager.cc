@@ -42,6 +42,8 @@
 #include "G4VUserActionInitialization.hh"
 #include "G4WorkerRunManager.hh"
 #include "G4WorkerThread.hh"
+#include <exception>
+#include <stdexcept>
 
 G4ScoringManager* G4MTRunManager::masterScM = 0;
 G4MTRunManager::masterWorlds_t G4MTRunManager::masterWorlds =
@@ -99,6 +101,17 @@ G4int G4MTRunManager::SeedOncePerCommunication()
 void G4MTRunManager::SetSeedOncePerCommunication(G4int val)
 {
   seedOncePerCommunication = val;
+}
+
+void G4MTRunManager::NotifyException(std::exception_ptr exception) {
+    {
+        std::lock_guard<std::mutex> lock{this->mutex};
+        this->worker_exceptions.push_back(exception);
+    }
+
+    this->bypassCleanup = true;
+    this->endOfEventLoopBarrier.Wait(0);
+    this->AbortRun(true);
 }
 
 G4MTRunManager::G4MTRunManager()
@@ -663,6 +676,7 @@ G4int G4MTRunManager::SetUpNEvents(G4Event* evt, G4SeedsQueue* seedsQueue,
 
 void G4MTRunManager::TerminateWorkers()
 {
+     if(this->bypassCleanup) return;
   // Force workers to execute (if any) all UI commands left in the stack
   RequestWorkersProcessCommandsStack();
   // Ask workers to exit
@@ -719,6 +733,9 @@ void G4MTRunManager::ThisWorkerReady()
 void G4MTRunManager::WaitForEndEventLoopWorkers()
 {
   endOfEventLoopBarrier.Wait(GetNumberActiveThreads());
+    if(!this->worker_exceptions.empty()) {
+        std::rethrow_exception(this->worker_exceptions.front());
+    }
   beginOfEventLoopBarrier.ResetCounter();
   endOfEventLoopBarrier.ReleaseBarrier();
 }

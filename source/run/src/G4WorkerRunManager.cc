@@ -48,6 +48,8 @@
 #include "G4VVisManager.hh"
 #include "G4WorkerRunManagerKernel.hh"
 #include "G4WorkerThread.hh"
+#include "G4EventException.hh"
+#include <exception>
 #include <fstream>
 #include <sstream>
 
@@ -327,6 +329,7 @@ void G4WorkerRunManager::DoEventLoop(G4int n_event, const char* macroFile,
 void G4WorkerRunManager::ProcessOneEvent(G4int i_event)
 {
   currentEvent = GenerateEvent(i_event);
+  try{
   if(eventLoopOnGoing)
   {
     eventManager->ProcessOneEvent(currentEvent);
@@ -334,6 +337,10 @@ void G4WorkerRunManager::ProcessOneEvent(G4int i_event)
     UpdateScoring();
     if(currentEvent->GetEventID() < n_select_msg)
       G4UImanager::GetUIpointer()->ApplyCommand(msgText);
+  }
+  }
+  catch(...) {
+      std::throw_with_nested(G4EventException{currentEvent});
   }
 }
 
@@ -803,6 +810,7 @@ void G4WorkerRunManager::rndmSaveThisEvent()
 
 void G4WorkerRunManager::DoWork()
 {
+    try{
   G4MTRunManager* mrm = G4MTRunManager::GetMasterRunManager();
   G4MTRunManager::WorkerActionRequest nextAction =
     mrm->ThisWorkerWaitForNextAction();
@@ -872,4 +880,8 @@ void G4WorkerRunManager::DoWork()
   }  // No more actions to perform
 
   return;
+    }
+    catch(...) {
+        G4MTRunManager::GetMasterRunManager()->NotifyException(std::current_exception());
+    }
 }

@@ -14,6 +14,7 @@ geant4_define_module(NAME G4event
     G4ClassificationOfNewTrack.hh
     G4EvManMessenger.hh
     G4Event.hh
+    G4EventException.hh
     G4EventManager.hh
     G4GeneralParticleSource.hh
     G4GeneralParticleSourceData.hh
@@ -48,6 +49,7 @@ geant4_define_module(NAME G4event
     G4AdjointStackingAction.cc
     G4EvManMessenger.cc
     G4Event.cc
+    G4EventException.cc
     G4EventManager.cc
     G4GeneralParticleSource.cc
     G4GeneralParticleSourceData.cc

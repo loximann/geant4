@@ -23,6 +23,7 @@ geant4_define_module(NAME G4track
     G4ParticleChangeForTransport.icc
     G4Step.hh
     G4Step.icc
+    G4StepException.hh
     G4StepPoint.hh
     G4StepPoint.icc
     G4StepStatus.hh
@@ -47,6 +48,7 @@ geant4_define_module(NAME G4track
     G4ParticleChangeForMSC.cc
     G4ParticleChangeForTransport.cc
     G4Step.cc
+    G4StepException.cc
     G4StepPoint.cc
     G4Track.cc
     G4VParticleChange.cc

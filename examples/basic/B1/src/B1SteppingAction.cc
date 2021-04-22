@@ -53,6 +53,7 @@ B1SteppingAction::~B1SteppingAction()
 
 void B1SteppingAction::UserSteppingAction(const G4Step* step)
 {
+    throw std::runtime_error{"Wrench into the works!"};
   if (!fScoringVolume) { 
     const B1DetectorConstruction* detectorConstruction
       = static_cast<const B1DetectorConstruction*>
