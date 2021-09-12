@@ -62,13 +62,13 @@ void B1ActionInitialization::Build() const
 
   B1RunAction* runAction = new B1RunAction;
   SetUserAction(runAction);
-  
+
   B1EventAction* eventAction = new B1EventAction(runAction);
   SetUserAction(eventAction);
-  
+
   SetUserAction(new B1SteppingAction(eventAction));
 
     G4WorkerRunManager::GetWorkerRunManager()->StoreRandomNumberStatusToG4Event(1);
-}  
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

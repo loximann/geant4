@@ -51,6 +51,7 @@
 #include "G4AutoLock.hh"
 #include "G4ParallelWorldProcessStore.hh"
 #include "G4TaskRunManager.hh"
+#include "G4EventException.hh"
 
 #include <fstream>
 #include <sstream>
@@ -223,9 +224,11 @@ void G4WorkerTaskRunManager::DoEventLoop(G4int n_event, const char* macroFile,
     if(eventLoopOnGoing)
     {
       TerminateOneEvent();
-      if(runAborted) eventLoopOnGoing = false;
+      if(runAborted)
+        eventLoopOnGoing = false;
     }
-    if(!eventLoopOnGoing) break;
+    if(!eventLoopOnGoing)
+      break;
   }
 
   // TerminateEventLoop();
@@ -236,6 +239,7 @@ void G4WorkerTaskRunManager::DoEventLoop(G4int n_event, const char* macroFile,
 void G4WorkerTaskRunManager::ProcessOneEvent(G4int i_event)
 {
   currentEvent = GenerateEvent(i_event);
+  try{
   if(eventLoopOnGoing)
   {
     eventManager->ProcessOneEvent(currentEvent);
@@ -247,6 +251,10 @@ void G4WorkerTaskRunManager::ProcessOneEvent(G4int i_event)
              << ":" << __LINE__ << G4endl;
       G4UImanager::GetUIpointer()->ApplyCommand(msgText);
     }
+  }
+  }
+  catch(...) {
+      std::throw_with_nested(G4EventException{currentEvent});
   }
 }
 
@@ -502,6 +510,7 @@ void G4WorkerTaskRunManager::DoCleanup()
 
 void G4WorkerTaskRunManager::DoWork()
 {
+    try{
   G4TaskRunManager* mrm           = G4TaskRunManager::GetMasterRunManager();
   G4bool newRun                   = false;
   const G4Run* run                = mrm->GetCurrentRun();
@@ -537,6 +546,10 @@ void G4WorkerTaskRunManager::DoWork()
     }
   }
   DoEventLoop(nevts, macro, numSelect);
+    }
+    catch(...) {
+        G4TaskRunManager::GetMasterRunManager()->NotifyException(std::current_exception());
+    }
 }
 
 //============================================================================//

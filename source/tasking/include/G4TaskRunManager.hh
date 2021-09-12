@@ -68,6 +68,7 @@ class G4TaskRunManager
   , public PTL::TaskRunManager
 {
   friend class G4RunManagerFactory;
+
  public:
   // the profiler aliases are only used when compiled with GEANT4_USE_TIMEMORY
   using ProfilerConfig = G4ProfilerConfig<G4ProfileType::Run>;
@@ -75,7 +76,6 @@ class G4TaskRunManager
  public:
   using InitializeSeedsCallback = std::function<G4bool(G4int, G4int&, G4int&)>;
   using RunTaskGroup            = G4TaskGroup<void>;
-  using RunTaskGroupTBB         = G4TBBTaskGroup<void>;
 
  public:
   // Parameters:
@@ -238,6 +238,10 @@ class G4TaskRunManager
   InitializeSeedsCallback initSeedsCallback = [](G4int, G4int&, G4int&) {
     return false;
   };
+ public:
+  void NotifyException(std::exception_ptr exception);
+  std::vector<std::exception_ptr> worker_exceptions;
+  std::mutex mutex;
 };
 
 #endif  // G4TaskRunManager_hh

@@ -18,11 +18,11 @@ geant4_add_dataset(
 # - Low energy electromagnetics
 geant4_add_dataset(
   NAME      G4EMLOW
-  VERSION   7.13
+  VERSION   7.17
   FILENAME  G4EMLOW
   EXTENSION tar.gz
   ENVVAR    G4LEDATA
-  MD5SUM    55922521aa331655a0494cdf8f9a70e8
+  MD5SUM    7cc8360a78fe6d501cdf34a945e71a25
   )
 
 # - Photon evaporation
@@ -123,11 +123,11 @@ mark_as_advanced(GEANT4_INSTALL_DATASETS_TENDL)
 if(GEANT4_INSTALL_DATASETS_TENDL)
   geant4_add_dataset(
   NAME      G4TENDL
-  VERSION   1.4
+  VERSION   1.3.2
   FILENAME  G4TENDL
   EXTENSION tar.gz
   ENVVAR    G4PARTICLEHPDATA
-  MD5SUM    ecdad2f8234c10caecaac82ac0cb96f8
+  MD5SUM    209f878b777a36842d20a47ca53c6f93
   )
 
 endif()

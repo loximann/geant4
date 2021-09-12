@@ -2014,7 +2014,7 @@ G4int G4UIQt::ReceiveG4cout (
  const G4String& aString
  )
 {
-  if (!aString) return 0;
+  if(aString.empty()) return  0;
 
 #ifdef G4MULTITHREADED
   G4AutoLock al(&ReceiveG4coutMutex);
@@ -2105,7 +2105,7 @@ G4int G4UIQt::ReceiveG4cerr (
  const G4String& aString
 )
 {
-  if (!aString) return 0;
+  if (aString.empty()) return 0;
 
 #ifdef G4MULTITHREADED
   G4AutoLock al(&ReceiveG4cerrMutex);
@@ -2588,6 +2588,19 @@ void G4UIQt::OutputStyle (const char* destination,const char* style,const char* 
   }
 }
 
+void G4UIQt::NativeMenu(bool aVal)
+{
+  if ( fMainWindow->menuBar()->isNativeMenuBar() == aVal )
+    return; // already in this state
+
+  // Menu become empty when goin from Qt to Native Bar
+  fMainWindow->menuBar()->setNativeMenuBar(aVal);
+}
+
+void G4UIQt::ClearMenu()
+{
+  fMainWindow->menuBar()->clear();
+}
 
 void G4UIQt::ActivateCommand(
  G4String newCommand
@@ -4637,6 +4650,8 @@ void G4UIQt::CreatePickInfosDialog() {
 
 
 void G4UIQt::CreateEmptyViewerPropertiesWidget() {
+  if(!fViewerPropertiesWidget) return;
+  if(!fViewerPropertiesWidget->layout()) return;
   QLayoutItem * wItem;
   if (fViewerPropertiesWidget->layout()->count()) {
     while ((wItem = fViewerPropertiesWidget->layout()->takeAt(0)) != 0) {
@@ -4648,6 +4663,9 @@ void G4UIQt::CreateEmptyViewerPropertiesWidget() {
   QLabel* label = new QLabel("No viewer - Please open a viewer first");
   fViewerPropertiesWidget->layout()->addWidget(label);
   fViewerPropertiesDialog->setWindowTitle("No viewer");
+  fViewerPropertiesDialog->show();
+  fViewerPropertiesDialog->raise();
+  fViewerPropertiesDialog->activateWindow();
 }
 
 
@@ -5054,6 +5072,7 @@ void G4UIQt::TabCloseCallback(int a){
   }
 
   if (lastTab) {
+    CreateViewerPropertiesDialog();
     CreateEmptyViewerPropertiesWidget();
   }
   // delete the widget

@@ -47,8 +47,6 @@
 #ifndef G4GammaGeneralProcess_h
 #define G4GammaGeneralProcess_h 1
 
-#include <CLHEP/Units/SystemOfUnits.h>
-
 #include "G4VEmProcess.hh"
 #include "globals.hh"
 #include "G4EmDataHandler.hh"
@@ -155,10 +153,13 @@ private:
   // It returns the cross section per volume for energy/ material
   G4double TotalCrossSectionPerVolume();
 
+  G4bool RetrieveTable(G4VEmProcess*, const G4String& directory, 
+                       G4bool ascii);
+
 protected:
 
-  G4HadronicProcess*           theGammaNuclear;
-  G4VProcess*                  selectedProc;
+  G4HadronicProcess*           theGammaNuclear = nullptr;
+  G4VProcess*                  selectedProc = nullptr;
 
 private:
   static G4EmDataHandler*      theHandler;
@@ -166,23 +167,23 @@ private:
   static G4bool                theT[nTables];
   static G4String              nameT[nTables];
 
-  G4VEmProcess*                thePhotoElectric;
-  G4VEmProcess*                theCompton;
-  G4VEmProcess*                theConversionEE;
-  G4VEmProcess*                theRayleigh;
-  G4GammaConversionToMuons*    theConversionMM;
+  G4VEmProcess*                thePhotoElectric = nullptr;
+  G4VEmProcess*                theCompton = nullptr;
+  G4VEmProcess*                theConversionEE = nullptr;
+  G4VEmProcess*                theRayleigh = nullptr;
+  G4GammaConversionToMuons*    theConversionMM = nullptr;
 
   G4double                     minPEEnergy;
   G4double                     minEEEnergy;
   G4double                     minMMEnergy;
-  G4double                     peLambda;
-  G4double                     preStepLogE;
-  G4double                     factor;
+  G4double                     peLambda = 0.0;
+  G4double                     preStepLogE = 1.0;
+  G4double                     factor = 1.0;
 
-  size_t                       nLowE;
-  size_t                       nHighE;
-  size_t                       idxEnergy;
-  G4bool                       splineFlag;
+  size_t                       nLowE = 40;
+  size_t                       nHighE = 50;
+  size_t                       idxEnergy = 0;
+  G4bool                       splineFlag = false;
 };
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo....
@@ -216,7 +217,7 @@ G4GammaGeneralProcess::SelectedProcess(const G4Step& step, G4VProcess* ptr)
 
 inline void G4GammaGeneralProcess::SelectEmProcess(const G4Step& step, G4VEmProcess* proc)
 {
-  proc->CurrentSetup(currentCouple,preStepKinEnergy);
+  proc->CurrentSetup(currentCouple, preStepKinEnergy);
   SelectedProcess(step, proc);
 }
 
