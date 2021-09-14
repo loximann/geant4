@@ -240,6 +240,7 @@ class G4TaskRunManager
   };
  public:
   void NotifyException(std::exception_ptr exception);
+ private:
   std::vector<std::exception_ptr> worker_exceptions;
   std::mutex mutex;
 };
