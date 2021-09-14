@@ -165,6 +165,7 @@ int main(int argc,char** argv)
   }
   catch(...) {
       process_exception(std::current_exception());
+      exit(42);
   }
 
   // Job termination
