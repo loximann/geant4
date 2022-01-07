@@ -32,6 +32,7 @@
 
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
+#include "my_parallel_world.hh"
 
 class G4VPhysicalVolume;
 class G4LogicalVolume;
@@ -53,6 +54,7 @@ class DetectorConstruction : public G4VUserDetectorConstruction
 
   protected:
     G4LogicalVolume* fScoringVolume = nullptr;
+    MyParallelWorld fParallelWorld{};
 };
 
 }
