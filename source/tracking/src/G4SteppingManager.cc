@@ -96,6 +96,8 @@ G4SteppingManager::G4SteppingManager()
    physIntLength = DBL_MAX; 
    kCarTolerance = 0.5*G4GeometryTolerance::GetInstance()
                  ->GetSurfaceTolerance();
+
+   fNoProcess = new G4NoProcess;
 }
 
 ///////////////////////////////////////

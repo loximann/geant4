@@ -27,8 +27,8 @@
 /// \file exampleB1.cc
 /// \brief Main program of the B1 example
 
-#include "B1DetectorConstruction.hh"
-#include "B1ActionInitialization.hh"
+#include "DetectorConstruction.hh"
+#include "ActionInitialization.hh"
 
 #include "G4RunManagerFactory.hh"
 #include "G4SteppingVerbose.hh"
@@ -40,6 +40,7 @@
 
 #include "Randomize.hh"
 
+using namespace B1;
 #include "G4SystemOfUnits.hh"
 
 #include "G4Step.hh"
@@ -127,7 +128,7 @@ int main(int argc,char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new B1DetectorConstruction());
+  runManager->SetUserInitialization(new DetectorConstruction());
 
   // Physics list
   G4VModularPhysicsList* physicsList = new QBBC;
@@ -135,7 +136,7 @@ int main(int argc,char** argv)
   runManager->SetUserInitialization(physicsList);
 
   // User action initialization
-  runManager->SetUserInitialization(new B1ActionInitialization());
+  runManager->SetUserInitialization(new ActionInitialization());
 
   // Initialize visualization
   //
